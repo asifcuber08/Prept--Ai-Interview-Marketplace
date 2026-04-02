@@ -8,8 +8,9 @@ const BentoCard = ({ icon, title, desc, children, className = "" }) => {
       <span className="w-11 h-11 rounded-2xl bg-amber-400/10 border border-amber-400 flex items-center justify-center text-xl mb-5">
         {icon}
       </span>
-      <h3 className="">{title}</h3>
-      <p className="">{desc}</p>
+      <h3 className="font-serif text-xl tracking-tight mb-2">{title}</h3>
+      
+      <p className="text-sm text-stone-400 leading-relaxed">{desc}</p>
 
       {children}
     </div>
