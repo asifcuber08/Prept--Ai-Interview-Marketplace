@@ -23,15 +23,17 @@ const Header = () => {
       {/* Sign in */}
       <div className="flex items-center gap-3">
         <Show when="signed-out">
-            {/* Links */}
+          {/* Links */}
 
-            {/* Credits */}
+          {/* Credits */}
 
           <SignInButton mode="modal">
             <Button variant="ghost">Sign In</Button>
           </SignInButton>
           <SignUpButton>
-            <Button variant="gold">Get started</Button>
+            <Button size="lg" variant="gold">
+              Get started →
+            </Button>
           </SignUpButton>
         </Show>
         <Show when="signed-in">

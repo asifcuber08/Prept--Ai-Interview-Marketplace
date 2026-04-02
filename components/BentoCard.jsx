@@ -1,0 +1,19 @@
+import React from "react";
+
+const BentoCard = ({ icon, title, desc, children, className = "" }) => {
+  return (
+    <div
+      className={`relative bg-[#0f0f11] border-white/10 hover:border-amber-20 rounded-2xl p-9 h-full transition duration-300 overflow-hidden ${className}`}
+    >
+      <span className="w-11 h-11 rounded-2xl bg-amber-400/10 border border-amber-400 flex items-center justify-center text-xl mb-5">
+        {icon}
+      </span>
+      <h3 className="">{title}</h3>
+      <p className="">{desc}</p>
+
+      {children}
+    </div>
+  );
+};
+
+export default BentoCard;
