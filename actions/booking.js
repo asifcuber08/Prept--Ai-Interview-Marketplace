@@ -5,6 +5,7 @@ import { db } from "@/lib/prisma";
 import { request } from "@arcjet/next";
 import { currentUser } from "@clerk/nextjs/server";
 import { StreamClient } from "@stream-io/node-sdk";
+import { revalidatePath } from "next/cache";
 
 const bookingLimiter = createRateLimiter({
   refillRate: 2,
@@ -65,7 +66,7 @@ export const bookSlot = async ({ interviewerId, startTime, endTime }) => {
   if (!interviewer || interviewer.role !== "INTERVIEWER")
     throw new Error("Interviewer not found");
 
-  const credits = interviewer.creditRate ?? 1;
+  const credits = interviewer.creditRate ?? 10;
 
   if (dbUser.credits < credits)
     throw new Error("Insufficient credits. Please upgrade your plan.");
@@ -79,13 +80,11 @@ export const bookSlot = async ({ interviewerId, startTime, endTime }) => {
       endTime: { gt: new Date(startTime) },
     },
   });
-
   if (conflict)
     throw new Error("This slot was just booked. Please pick another.");
 
   // ── Create Stream call ─────────────────────────────────────────────────────
   let streamCallId;
-
   try {
     const streamClient = new StreamClient(
       process.env.NEXT_PUBLIC_STREAM_API_KEY,
@@ -124,9 +123,10 @@ export const bookSlot = async ({ interviewerId, startTime, endTime }) => {
           recording: { mode: "available", quality: "1080p" },
           screensharing: {
             enabled: true,
+            // target_resolution: { width: 1920, height: 1080 },
           },
           transcription: {
-            mode: "auto-on",
+            mode: "auto-on", // starts when first user joins, stops when all leave
           },
         },
       },
@@ -140,7 +140,7 @@ export const bookSlot = async ({ interviewerId, startTime, endTime }) => {
     const booking = await db.$transaction(async (tx) => {
       const newBooking = await tx.booking.create({
         data: {
-          interviewerId: dbUser.id,
+          intervieweeId: dbUser.id,
           interviewerId,
           startTime: new Date(startTime),
           endTime: new Date(endTime),
@@ -163,7 +163,6 @@ export const bookSlot = async ({ interviewerId, startTime, endTime }) => {
         where: { id: dbUser.id },
         data: { credits: { decrement: credits } },
       });
-
       await tx.user.update({
         where: { id: interviewerId },
         data: { creditBalance: { increment: credits } },
