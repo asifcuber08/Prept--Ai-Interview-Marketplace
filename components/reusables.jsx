@@ -18,7 +18,7 @@ export const SectionLabel = ({ children }) => (
 
 export const SectionHeading = ({ gray, gold }) => (
   <h2
-    className={`font-serif text-[clamp(2rem,4vw,3rem)] leading-[1.1] tracking-[-0.025em]`}
+    className={`font-serif text-[clamp(2rem,4vw,3rem)] leading-[1.1] tracking-tight-[-0.025em]`}
   >
     <GrayTitle>{gray}</GrayTitle>
     <br />
