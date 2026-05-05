@@ -16,9 +16,11 @@ import { formatDate, formatDuration, formatTime } from "@/lib/helpers";
 import { Button } from "./ui/button";
 import Link from "next/link";
 import FeedbackModal from "./FeedbackModal";
+import UpgradeModal from "./UpgradeModal";
 
 const AppointmentCard = ({ booking, mode, isPast = false }) => {
   const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [upgradeOpen, setUpgradeOpen] = useState(false);
   const { has } = useAuth();
 
   const {
@@ -48,6 +50,12 @@ const AppointmentCard = ({ booking, mode, isPast = false }) => {
 
   return (
     <>
+      <UpgradeModal
+        open={upgradeOpen}
+        onOpenChange={setUpgradeOpen}
+        reason="This feature is available on Pro plan. Upgrade to access session recordings."
+      />
+
       <FeedbackModal
         open={feedbackOpen}
         onOpenChange={setFeedbackOpen}
@@ -174,38 +182,66 @@ const AppointmentCard = ({ booking, mode, isPast = false }) => {
               </Button>
             )}
 
-            {recordingUrl && has?.({ plan: "pro" }) && (
-              <Button variant="outline" size="sm" className="gap-2" asChild>
-                <a
-                  href={recordingUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  📹 Recording
-                </a>
-              </Button>
-            )}
-
-            {feedback &&
-              (has?.({ plan: "starter" }) || has?.({ plan: "pro" })) && (
-                <>
+            {recordingUrl && (
+              <>
+                {mode === "interviewer" || has?.({ plan: "pro" }) ? (
+                  <Button variant="outline" size="sm" className="gap-2" asChild>
+                    <a
+                      href={recordingUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      📹 Recording
+                    </a>
+                  </Button>
+                ) : (
                   <Button
                     variant="outline"
                     size="sm"
-                    className="gap-1.5 border-amber-400/20 text-amber-400 hover:bg-amber-400/10 hover:border-amber-400/40"
-                    onClick={() => setFeedbackOpen(true)}
+                    className="gap-2 border-stone-600 text-stone-500 hover:border-amber-400/40 hover:text-amber-400"
+                    onClick={() => setUpgradeOpen(true)}
+                  >
+                    📹 Recording
+                    <span className="text-xs">🔒</span>
+                  </Button>
+                )}
+              </>
+            )}
+
+            {feedback && (
+              <>
+                {mode === "interviewer" || has?.({ plan: "starter" }) || has?.({ plan: "pro" }) ? (
+                  <>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="gap-1.5 border-amber-400/20 text-amber-400 hover:bg-amber-400/10 hover:border-amber-400/40"
+                      onClick={() => setFeedbackOpen(true)}
+                    >
+                      <Sparkles size={12} />
+                      Full Feedback
+                    </Button>
+                    <Badge
+                      variant="outline"
+                      className={RATING_STYLES[feedback.overallRating]}
+                    >
+                      ✦ {RATING_LABEL[feedback.overallRating]} performance
+                    </Badge>
+                  </>
+                ) : (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="gap-1.5 border-stone-600 text-stone-500 hover:border-amber-400/40 hover:text-amber-400"
+                    onClick={() => setUpgradeOpen(true)}
                   >
                     <Sparkles size={12} />
                     Full Feedback
+                    <span className="text-xs">🔒</span>
                   </Button>
-                  <Badge
-                    variant="outline"
-                    className={RATING_STYLES[feedback.overallRating]}
-                  >
-                    ✦ {RATING_LABEL[feedback.overallRating]} performance
-                  </Badge>
-                </>
-              )}
+                )}
+              </>
+            )}
           </div>
         )}
       </article>

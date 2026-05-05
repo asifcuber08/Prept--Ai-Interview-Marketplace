@@ -41,13 +41,31 @@ export default function RootLayout({ children }) {
           >
             {/* Header */}
             <Header />
-            
+
             <main className="min-h-screen">{children}</main>
             <Toaster richColors />
 
             {/* Footer */}
             <footer className="relative z-10 border-t border-white/7 py-12  mx-auto px-6 flex flex-wrap items-center justify-center text-stone-400">
-              Made with ❤️ by Asif Shamim
+              <div className="container mx-auto px-4 text-center">
+                <div>
+                  <p className="text-lg font-medium text-muted-foreground">
+                    Made with ❤️ by{" "}
+                    <a
+                      href="https://portfolio-asif08.vercel.app/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-foreground hover:text-yellow-500 transition-colors"
+                    >
+                      Asif Shamim
+                    </a>
+                  </p>
+
+                  <p className="text-xs text-muted-foreground mt-2">
+                    © {new Date().getFullYear()} Prept. All rights reserved.
+                  </p>
+                </div>
+              </div>
             </footer>
           </ThemeProvider>
         </body>

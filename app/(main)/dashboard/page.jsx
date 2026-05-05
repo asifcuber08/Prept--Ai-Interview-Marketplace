@@ -72,7 +72,7 @@ const InterviewerDashboardPage = async () => {
             <AppointmentsSection appointments={appointments} />
           </TabsContent>
 
-           <TabsContent value="availability">
+          <TabsContent value="availability">
             <AvailabilitySection initial={availability} />
           </TabsContent>
 
